@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./jewelry-shop-backend
+    container_name: jewelry-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  frontend:
+    build: ./jewelry-shop-client
+    container_name: jewelry-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
