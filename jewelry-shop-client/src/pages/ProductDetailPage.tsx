@@ -1,101 +1,75 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useOrderDetail } from '../hooks/useOrder'
+import { useProduct } from '../hooks/useProduct'
+import { useCart } from '../hooks/useCart'
+import { useAuth } from '../hooks/useAuth'
 
-const STATUS_STEPS = ['PENDING', 'CONFIRMED', 'SHIPPING', 'DELIVERED']
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: 'Chờ xử lý', CONFIRMED: 'Đã xác nhận',
-  SHIPPING: 'Đang giao', DELIVERED: 'Đã giao', CANCELLED: 'Đã hủy'
-}
-
-export default function OrderDetailPage() {
-  const { orderCode } = useParams()
+export default function ProductDetailPage() {
+  const { id } = useParams()
   const navigate = useNavigate()
-  const { order, loading } = useOrderDetail(orderCode!)
+  const { user } = useAuth()
+  const { data: product, loading } = useProduct(Number(id))
+  const { add } = useCart(user?.id ?? null)
 
   if (loading) return (
-    <div style={{ textAlign: 'center', padding: '120px 0', color: 'var(--muted)', letterSpacing: '0.15em', fontSize: '0.8rem', textTransform: 'uppercase' }}>Đang tải...</div>
+    <div style={{ textAlign: 'center', padding: '120px 0', color: 'var(--muted)', letterSpacing: '0.15em', fontSize: '0.8rem', textTransform: 'uppercase' }}>
+      Đang tải...
+    </div>
   )
-  if (!order) return (
-    <div style={{ textAlign: 'center', padding: '120px 0', color: 'var(--muted)' }}>Không tìm thấy đơn hàng</div>
+  if (!product) return (
+    <div style={{ textAlign: 'center', padding: '120px 0', color: 'var(--muted)' }}>Không tìm thấy sản phẩm</div>
   )
 
-  const stepIndex = STATUS_STEPS.indexOf(order.status)
+  const handleAdd = async () => {
+    if (!user) return navigate('/login')
+    await add(product.id, 1)
+    navigate('/cart')
+  }
 
   return (
-    <div className="page-enter max-w-3xl mx-auto px-8 py-16">
-      <button onClick={() => navigate('/orders')}
-        style={{ fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', marginBottom: '48px' }}>
-        ← Đơn hàng của tôi
+    <div className="page-enter max-w-6xl mx-auto px-8 py-16">
+      <button onClick={() => navigate(-1)}
+        style={{ fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', marginBottom: '48px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        ← Quay lại
       </button>
 
-      <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-        <p style={{ fontSize: '0.65rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '8px' }}>Đơn hàng</p>
-        <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2rem', fontWeight: 300 }}>#{order.orderCode}</h1>
-      </div>
-
-      {/* Progress */}
-      {order.status !== 'CANCELLED' && (
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '48px' }}>
-          {STATUS_STEPS.map((step, i) => (
-            <div key={step} style={{ display: 'flex', alignItems: 'center', flex: i < STATUS_STEPS.length - 1 ? 1 : 'none' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                <div style={{
-                  width: '28px', height: '28px', borderRadius: '50%',
-                  background: i <= stepIndex ? 'var(--gold)' : 'transparent',
-                  border: `1px solid ${i <= stepIndex ? 'var(--gold)' : 'var(--border)'}`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                  {i < stepIndex && <span style={{ color: 'white', fontSize: '0.7rem' }}>✓</span>}
-                </div>
-                <span style={{ fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: i <= stepIndex ? 'var(--gold-dark)' : 'var(--muted)', whiteSpace: 'nowrap' }}>
-                  {STATUS_LABEL[step]}
-                </span>
-              </div>
-              {i < STATUS_STEPS.length - 1 && (
-                <div style={{ flex: 1, height: '1px', background: i < stepIndex ? 'var(--gold)' : 'var(--border)', margin: '0 8px', marginBottom: '20px' }} />
-              )}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
+        {/* Image */}
+        <div style={{ height: '280px', background: 'var(--cream)', overflow: 'hidden' }}>
+          {product.imageUrl ? (
+            <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '2rem', opacity: 0.15 }}>◇</span>
             </div>
-          ))}
+          )}
         </div>
-      )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '40px' }}>
-        <div style={{ background: 'var(--cream)', padding: '24px', border: '1px solid var(--border)' }}>
-          <p style={{ fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '12px' }}>Thông tin giao hàng</p>
-          <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem', marginBottom: '4px' }}>{order.recipientName}</p>
-          <p style={{ fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '4px' }}>{order.recipientPhone}</p>
-          <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>{order.shippingAddress}</p>
-        </div>
-        <div style={{ background: 'var(--cream)', padding: '24px', border: '1px solid var(--border)' }}>
-          <p style={{ fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '12px' }}>Thanh toán</p>
-          <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem', marginBottom: '4px' }}>{order.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
-          <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>{new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-        </div>
-      </div>
+        {/* Info */}
+        <div>
+          {product.category && (
+            <span className="tag" style={{ marginBottom: '20px', display: 'inline-block' }}>{product.category.name}</span>
+          )}
+          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.8rem', fontWeight: 300, lineHeight: 1.15, marginBottom: '16px', color: 'var(--charcoal)' }}>
+            {product.name}
+          </h1>
+          <p style={{ fontSize: '1.6rem', color: 'var(--gold-dark)', letterSpacing: '0.05em', marginBottom: '32px', fontFamily: 'Cormorant Garamond, serif' }}>
+            {product.price.toLocaleString('vi-VN')}₫
+          </p>
 
-      {/* Items */}
-      <div style={{ border: '1px solid var(--border)' }}>
-        {order.items?.map((item, i) => (
-          <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: i < order.items.length - 1 ? '1px solid var(--border)' : 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ width: '52px', height: '52px', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
-                <span style={{ opacity: 0.2, fontSize: '0.8rem' }}>◇</span>
-              </div>
-              <div>
-                <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.05rem' }}>{item.product.name}</p>
-                <p style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>x{item.quantity}</p>
-              </div>
-            </div>
-            <p style={{ color: 'var(--gold-dark)', fontFamily: 'Cormorant Garamond, serif', fontSize: '1rem' }}>
-              {(item.unitPrice * item.quantity).toLocaleString('vi-VN')}₫
-            </p>
-          </div>
-        ))}
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 24px', background: 'var(--cream)', borderTop: '1px solid var(--border)' }}>
-          <span style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem' }}>Tổng cộng</span>
-          <span style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', color: 'var(--gold-dark)' }}>
-            {order.totalAmount.toLocaleString('vi-VN')}₫
-          </span>
+          <div style={{ width: '100%', height: '1px', background: 'var(--border)', marginBottom: '32px' }} />
+
+          <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: 1.8, letterSpacing: '0.04em', marginBottom: '40px' }}>
+            {product.description}
+          </p>
+
+          <p style={{ fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '32px' }}>
+            Còn lại: <span style={{ color: 'var(--charcoal)' }}>{product.stock} sản phẩm</span>
+          </p>
+
+          <button className="btn-primary" style={{ width: '100%' }}
+            onClick={handleAdd} disabled={product.stock === 0}>
+            {product.stock === 0 ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
+          </button>
         </div>
       </div>
     </div>

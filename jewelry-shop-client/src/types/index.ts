@@ -15,6 +15,7 @@ export interface Product {
   name: string
   description: string
   price: number
+  imageUrl: string | null
   stock: number
   active: boolean
   category: Category

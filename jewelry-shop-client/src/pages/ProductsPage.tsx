@@ -5,6 +5,8 @@ import { useCart } from '../hooks/useCart'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 
+const HERO_IMG = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1600&q=85'
+
 export default function ProductsPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -22,16 +24,29 @@ export default function ProductsPage() {
   return (
     <div className="page-enter">
       {/* Hero */}
-      <div style={{ background: 'var(--cream)', padding: '80px 32px', textAlign: 'center', borderBottom: '1px solid var(--border)' }}>
-        <p style={{ fontSize: '0.65rem', letterSpacing: '0.35em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '16px' }}>
-          Bộ sưu tập mới nhất
-        </p>
-        <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '3.5rem', fontWeight: 300, color: 'var(--charcoal)', lineHeight: 1.1, marginBottom: '16px' }}>
-          Trang sức cao cấp
-        </h1>
-        <p style={{ color: 'var(--muted)', fontSize: '0.9rem', letterSpacing: '0.08em', maxWidth: '400px', margin: '0 auto' }}>
-          Được chế tác thủ công từ những nguyên liệu quý hiếm nhất thế giới
-        </p>
+      <div style={{ position: 'relative', height: '520px', overflow: 'hidden', borderBottom: '1px solid var(--border)' }}>
+        <img
+          src={HERO_IMG}
+          alt="Lumière Jewelry"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }}
+        />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(30, 26, 20, 0.45)',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          textAlign: 'center', padding: '0 24px'
+        }}>
+          <p style={{ fontSize: '0.65rem', letterSpacing: '0.4em', textTransform: 'uppercase', color: 'rgba(212,175,100,0.9)', marginBottom: '16px' }}>
+            Bộ sưu tập mới nhất
+          </p>
+          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '4rem', fontWeight: 300, color: '#f5f0e8', lineHeight: 1.1, marginBottom: '20px', letterSpacing: '0.05em' }}>
+            Trang sức cao cấp
+          </h1>
+          <p style={{ color: 'rgba(245,240,232,0.75)', fontSize: '0.9rem', letterSpacing: '0.1em', maxWidth: '380px' }}>
+            Được chế tác thủ công từ những nguyên liệu quý hiếm nhất thế giới
+          </p>
+        </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-8 py-12">
@@ -57,9 +72,14 @@ export default function ProductsPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
             {data?.content.map(p => (
               <div key={p.id} className="product-card" onClick={() => navigate(`/products/${p.id}`)}>
-                {/* Placeholder image area */}
-                <div style={{ height: '280px', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: '2rem', opacity: 0.15 }}>◇</span>
+                <div style={{ height: '280px', background: 'var(--cream)', overflow: 'hidden' }}>
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: '2rem', opacity: 0.15 }}>◇</span>
+                    </div>
+                  )}
                 </div>
                 <div style={{ padding: '20px 24px 24px' }}>
                   {p.category && <span className="tag" style={{ marginBottom: '10px', display: 'inline-block' }}>{p.category.name}</span>}
@@ -79,7 +99,6 @@ export default function ProductsPage() {
           </div>
         )}
 
-        {/* Pagination */}
         {(data?.totalPages ?? 0) > 1 && (
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '48px' }}>
             {Array.from({ length: data!.totalPages }, (_, i) => (

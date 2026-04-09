@@ -19,7 +19,7 @@ export function useProduct(id: number | null) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!id) return
+    if (id === null || isNaN(id)) return
 
     setLoading(true)
     productApi.getById(id)
