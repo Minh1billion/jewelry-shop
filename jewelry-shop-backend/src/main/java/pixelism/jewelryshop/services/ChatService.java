@@ -36,20 +36,23 @@ public class ChatService {
                 .build());
 
         // Build conversation history cho Claude
-        List<Map<String, String>> history = messageRepository
-                .findBySessionOrderByCreatedAtAsc(session)
-                .stream()
-                .filter(m -> m.getId() < userMsg.getId())
-                .map(m -> Map.of(
-                        "role", m.getSenderType() == ChatMessage.SenderType.USER ? "user" : "assistant",
-                        "content", m.getContent()
-                ))
-                .collect(Collectors.toList());
+//        List<Map<String, String>> history = messageRepository
+//                .findBySessionOrderByCreatedAtAsc(session)
+//                .stream()
+//                .filter(m -> m.getId() < userMsg.getId())
+//                .filter(m -> m.getContent() != null && !m.getContent().isBlank()) // ← thêm dòng này
+//                .map(m -> Map.of(
+//                        "role", m.getSenderType() == ChatMessage.SenderType.USER ? "user" : "assistant",
+//                        "content", m.getContent()
+//                ))
+//                .collect(Collectors.toList());
+
+        List<Map<String, String>> history = new java.util.ArrayList<>();
 
         String reply = claudeClient.chat(history, content);
 
-        if ("Không biết".equals(reply)) {
-            reply = "Cung cấp thêm thông tin";
+        if (reply == null || reply.isBlank() || "Không biết".equals(reply)) {
+            reply = "Xin lỗi, tôi chưa có đủ thông tin để trả lời. Bạn có thể cung cấp thêm chi tiết không?";
         }
 
         return messageRepository.save(ChatMessage.builder()

@@ -24,8 +24,8 @@ public class ClaudeClientService {
     @Value("${claude.api.timeout-seconds:10}")
     private int timeoutSeconds;
 
-    private static final String CLAUDE_URL = "https://api.anthropic.com/v1/messages";
-    private static final String MODEL = "claude-sonnet-4-20250514";
+    private static final String CLAUDE_URL = "https://api.groq.com/openai/v1/chat/completions";
+    private static final String MODEL = "llama-3.3-70b-versatile";
     private static final String SYSTEM_PROMPT = """
         Bạn là trợ lý tư vấn của cửa hàng trang sức Pixelism.
         Hãy tư vấn về sản phẩm, đơn hàng và chính sách cửa hàng.
@@ -36,41 +36,66 @@ public class ClaudeClientService {
 
     @SuppressWarnings("unchecked")
     public String chat(List<Map<String, String>> history, String userMessage) {
-        List<Map<String, String>> messages = new java.util.ArrayList<>(history);
-        messages.add(Map.of("role", "user", "content", userMessage));
+        log.info("Groq API key prefix: {}", apiKey != null ? apiKey.substring(0, 10) : "NULL");
+        log.info("Calling Groq with message: {}", userMessage);
+        log.info("History size: {}", history.size());
+
+        List<Map<String, String>> messages = new java.util.ArrayList<>();
+
+        // Dùng HashMap thay Map.of để tránh NullPointerException
+        java.util.Map<String, String> systemMsg = new java.util.HashMap<>();
+        systemMsg.put("role", "system");
+        systemMsg.put("content", SYSTEM_PROMPT);
+        messages.add(systemMsg);
+
+        messages.addAll(history);
+
+        java.util.Map<String, String> userMsg = new java.util.HashMap<>();
+        userMsg.put("role", "user");
+        userMsg.put("content", userMessage);
+        messages.add(userMsg);
+
+        log.info("Total messages sent to Groq: {}", messages.size());
 
         try {
             Map<String, Object> body = Map.of(
                     "model", MODEL,
                     "max_tokens", 1024,
-                    "system", SYSTEM_PROMPT,
                     "messages", messages
             );
 
             Map result = webClientBuilder.build()
                     .post()
                     .uri(CLAUDE_URL)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
-                    .header("anthropic-version", "2023-06-01")
+                    .header("Authorization", "Bearer " + apiKey)  // Groq dùng Bearer
+                    .header("Content-Type", "application/json")
                     .bodyValue(body)
                     .retrieve()
                     .bodyToMono(Map.class)
                     .timeout(Duration.ofSeconds(timeoutSeconds))
                     .onErrorResume(e -> {
-                        log.error("Claude API error: {}", e.getMessage());
+                        log.error("Groq API error: {}", e.getMessage());
+                        if (e instanceof org.springframework.web.reactive.function.client.WebClientResponseException ex) {
+                            log.error("Groq error body: {}", ex.getResponseBodyAsString());
+                        }
                         return Mono.empty();
                     })
                     .block();
 
-            if (result == null) return null;
+            log.info("Groq result: {}", result);
 
-            List<Map<String, Object>> content = (List<Map<String, Object>>) result.get("content");
-            if (content == null || content.isEmpty()) return null;
-            return (String) content.get(0).get("text");
+            if (result == null) return "Không biết";
+
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) result.get("choices");
+            if (choices == null || choices.isEmpty()) return "Không biết";
+
+            Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+            String text = (String) message.get("content");
+            return text != null ? text : "Không biết";
 
         } catch (Exception e) {
             log.error("Claude client exception: {}", e.getMessage());
-            return null;
+            return "Không biết";
         }
     }
 }
