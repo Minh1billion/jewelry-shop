@@ -1,5 +1,6 @@
 package pixelism.jewelryshop.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,7 @@ public class ChatSession {
     private LocalDateTime closedAt;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<ChatMessage> messages;
 
     @PrePersist
