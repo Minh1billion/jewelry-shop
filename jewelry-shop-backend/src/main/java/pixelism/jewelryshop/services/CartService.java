@@ -60,14 +60,4 @@ public class CartService {
                 });
         return cart.getItems();
     }
-
-    public Cart getOrCreateCart(User user) {
-        return cartRepository.findByUser(user)
-                .orElseGet(() -> {
-                    Cart newCart = new Cart();
-                    newCart.setUser(userRepository.findById(user.getId())
-                            .orElseThrow(() -> new RuntimeException("User not found")));
-                    return cartRepository.save(newCart);
-                });
-    }
 }
