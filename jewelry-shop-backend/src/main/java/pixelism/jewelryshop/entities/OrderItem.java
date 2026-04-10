@@ -33,13 +33,4 @@ public class OrderItem {
 
     @Column(precision = 5, scale = 2)
     private BigDecimal discountPercent;
-
-    public BigDecimal getSubtotal() {
-        BigDecimal base = unitPrice.multiply(BigDecimal.valueOf(quantity));
-        if (discountPercent != null && discountPercent.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal discount = base.multiply(discountPercent).divide(BigDecimal.valueOf(100));
-            return base.subtract(discount);
-        }
-        return base;
-    }
 }

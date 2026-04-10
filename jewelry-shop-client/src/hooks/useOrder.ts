@@ -26,3 +26,17 @@ export function useOrderDetail(orderCode: string) {
 
   return { order, loading }
 }
+
+export function useAllOrders() {
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const fetch = () => {
+    setLoading(true)
+    orderApi.getAll().then(setOrders).finally(() => setLoading(false))
+  }
+
+  useEffect(() => { fetch() }, [])
+
+  return { orders, loading, refresh: fetch }
+}

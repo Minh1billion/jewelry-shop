@@ -29,4 +29,13 @@ public class OrderService {
     public Order save(Order order) {
         return orderRepository.save(order);
     }
+
+    public Order confirmOrder(String orderCode) {
+        Order order = getOrderDetail(orderCode);
+        if (order.getStatus() != Order.OrderStatus.PENDING) {
+            throw new RuntimeException("Chỉ có thể xác nhận đơn hàng ở trạng thái PENDING");
+        }
+        order.setStatus(Order.OrderStatus.CONFIRMED);
+        return orderRepository.save(order);
+    }
 }

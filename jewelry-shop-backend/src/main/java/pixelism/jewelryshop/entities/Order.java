@@ -1,6 +1,5 @@
 package pixelism.jewelryshop.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,6 +46,13 @@ public class Order {
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal totalAmount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipper_id")
+    private Shipper shipper;
+
+    @Column
+    private LocalDateTime assignedAt;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

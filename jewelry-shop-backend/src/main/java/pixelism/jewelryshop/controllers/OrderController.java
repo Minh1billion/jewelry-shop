@@ -18,6 +18,11 @@ public class OrderController {
     private final OrderService orderService;
     private final UserRepository userRepository;
 
+    @GetMapping("/all")
+    public ResponseEntity<List<Order>> getAll() {
+        return ResponseEntity.ok(orderService.getAll());
+    }
+
     @GetMapping
     public ResponseEntity<List<Order>> getMyOrders(@RequestParam Long userId) {
         User user = userRepository.findById(userId)
@@ -39,5 +44,15 @@ public class OrderController {
         order.setStatus(Order.OrderStatus.CANCELLED);
         orderService.save(order);
         return ResponseEntity.ok(Map.of("message", "Đã hủy đơn"));
+    }
+
+    @PutMapping("/{orderCode}/confirm")
+    public ResponseEntity<?> confirm(@PathVariable String orderCode) {
+        Order order = orderService.confirmOrder(orderCode);
+        return ResponseEntity.ok(Map.of(
+                "message", "Đã xác nhận đơn hàng",
+                "orderCode", order.getOrderCode(),
+                "status", order.getStatus()
+        ));
     }
 }
