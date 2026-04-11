@@ -1,28 +1,33 @@
-package pixelism.jewelryshop.services;
+package pixelism.jewelryshop;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class ClaudeClientService {
+public class ChatService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${claude.api.key}")
+    @Value("${claude.api.key:YOUR_API_KEY_HERE}")
     private String apiKey;
 
     @Value("${claude.api.timeout-seconds:10}")
     private int timeoutSeconds;
+
+    public ChatService(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
+    }
 
     private static final String CLAUDE_URL = "https://api.groq.com/openai/v1/chat/completions";
     private static final String MODEL = "llama-3.3-70b-versatile";
@@ -40,17 +45,16 @@ public class ClaudeClientService {
         log.info("Calling Groq with message: {}", userMessage);
         log.info("History size: {}", history.size());
 
-        List<Map<String, String>> messages = new java.util.ArrayList<>();
+        List<Map<String, String>> messages = new ArrayList<>();
 
-        // Dùng HashMap thay Map.of để tránh NullPointerException
-        java.util.Map<String, String> systemMsg = new java.util.HashMap<>();
+        Map<String, String> systemMsg = new HashMap<>();
         systemMsg.put("role", "system");
         systemMsg.put("content", SYSTEM_PROMPT);
         messages.add(systemMsg);
 
         messages.addAll(history);
 
-        java.util.Map<String, String> userMsg = new java.util.HashMap<>();
+        Map<String, String> userMsg = new HashMap<>();
         userMsg.put("role", "user");
         userMsg.put("content", userMessage);
         messages.add(userMsg);
@@ -67,7 +71,7 @@ public class ClaudeClientService {
             Map result = webClientBuilder.build()
                     .post()
                     .uri(CLAUDE_URL)
-                    .header("Authorization", "Bearer " + apiKey)  // Groq dùng Bearer
+                    .header("Authorization", "Bearer " + apiKey)
                     .header("Content-Type", "application/json")
                     .bodyValue(body)
                     .retrieve()
@@ -75,9 +79,8 @@ public class ClaudeClientService {
                     .timeout(Duration.ofSeconds(timeoutSeconds))
                     .onErrorResume(e -> {
                         log.error("Groq API error: {}", e.getMessage());
-                        if (e instanceof org.springframework.web.reactive.function.client.WebClientResponseException ex) {
+                        if (e instanceof org.springframework.web.reactive.function.client.WebClientResponseException ex)
                             log.error("Groq error body: {}", ex.getResponseBodyAsString());
-                        }
                         return Mono.empty();
                     })
                     .block();
@@ -94,7 +97,7 @@ public class ClaudeClientService {
             return text != null ? text : "Không biết";
 
         } catch (Exception e) {
-            log.error("Claude client exception: {}", e.getMessage());
+            log.error("ChatService exception: {}", e.getMessage());
             return "Không biết";
         }
     }

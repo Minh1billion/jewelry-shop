@@ -1,12 +1,21 @@
 package pixelism.jewelryshop.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pixelism.jewelryshop.entities.Order;
-import pixelism.jewelryshop.entities.User;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import pixelism.jewelryshop.Order;
+import pixelism.jewelryshop.User;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserOrderByCreatedAtDesc(User user);
     Optional<Order> findByOrderCode(String orderCode);
+
+    @Query("SELECT o FROM Order o WHERE o.paymentStatus = 'PAID' " +
+            "AND CAST(o.createdAt AS date) BETWEEN :from AND :to")
+    List<Order> findPaidOrdersBetween(@Param("from") LocalDate from,
+                                      @Param("to") LocalDate to);
 }

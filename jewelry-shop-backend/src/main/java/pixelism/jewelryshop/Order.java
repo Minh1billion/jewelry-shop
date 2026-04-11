@@ -1,8 +1,10 @@
-package pixelism.jewelryshop.entities;
+package pixelism.jewelryshop;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
+import pixelism.jewelryshop.repositories.OrderRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +17,7 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long orderId;
 
     @Column(nullable = false, unique = true)
     private String orderCode;
@@ -74,5 +76,23 @@ public class Order {
 
     public enum PaymentStatus {
         UNPAID, PAID, REFUNDED
+    }
+
+    public List<Order> getOrdersByUser(User user, OrderRepository orderRepository) {
+        return orderRepository.findByUserOrderByCreatedAtDesc(user);
+    }
+
+    public Order getOrderDetail(String orderCode, OrderRepository orderRepository) {
+        return orderRepository.findByOrderCode(orderCode)
+                .orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại"));
+    }
+
+    @Transactional
+    public Order confirmOrder(String orderCode, OrderRepository orderRepository) {
+        Order order = getOrderDetail(orderCode, orderRepository);
+        if (order.getStatus() != OrderStatus.PENDING)
+            throw new RuntimeException("Chỉ có thể xác nhận đơn hàng ở trạng thái PENDING");
+        order.setStatus(OrderStatus.CONFIRMED);
+        return orderRepository.save(order);
     }
 }

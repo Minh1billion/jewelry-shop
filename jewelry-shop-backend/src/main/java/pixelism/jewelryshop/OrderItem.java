@@ -1,26 +1,26 @@
-package pixelism.jewelryshop.entities;
+package pixelism.jewelryshop;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "cart_items")
+@Table(name = "order_items")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class CartItem {
+public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long orderItemId;
 
-    @JsonIgnore
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
-    private Cart cart;
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -30,10 +30,6 @@ public class CartItem {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(nullable = false)
-    private Boolean selected = false;
-
-    public BigDecimal getSubtotal() {
-        return unitPrice.multiply(BigDecimal.valueOf(quantity));
-    }
+    @Column(precision = 5, scale = 2)
+    private BigDecimal discountPercent;
 }

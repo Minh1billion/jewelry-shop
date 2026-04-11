@@ -2,8 +2,8 @@ package pixelism.jewelryshop.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import pixelism.jewelryshop.entities.Order;
-import pixelism.jewelryshop.entities.RevenueReport;
+import pixelism.jewelryshop.Order;
+import pixelism.jewelryshop.RevenueReport;
 import java.time.LocalDate;
 import java.util.List;
 

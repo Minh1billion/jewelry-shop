@@ -1,8 +1,10 @@
-package pixelism.jewelryshop.entities;
+package pixelism.jewelryshop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import pixelism.jewelryshop.repositories.ChatMessageRepository;
+import pixelism.jewelryshop.repositories.ChatSessionRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +16,7 @@ public class ChatSession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long sessionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -41,5 +43,14 @@ public class ChatSession {
 
     public enum SessionStatus {
         ACTIVE, CLOSED
+    }
+
+    public List<ChatMessage> getHistory(User user,
+                                        ChatSessionRepository sessionRepository,
+                                        ChatMessageRepository messageRepository) {
+        return sessionRepository
+                .findTopByUserAndStatusOrderByCreatedAtDesc(user, SessionStatus.ACTIVE)
+                .map(messageRepository::findBySessionOrderByCreatedAtAsc)
+                .orElse(List.of());
     }
 }

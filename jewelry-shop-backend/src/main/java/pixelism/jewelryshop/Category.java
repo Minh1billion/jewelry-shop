@@ -1,8 +1,9 @@
-package pixelism.jewelryshop.entities;
+package pixelism.jewelryshop;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import pixelism.jewelryshop.repositories.CategoryRepository;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long categoryId;
 
     @Column(nullable = false, unique = true)
     private String name;
@@ -23,4 +24,8 @@ public class Category {
     @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
+
+    public List<Category> getAll(CategoryRepository repo) {
+        return repo.findAll();
+    }
 }

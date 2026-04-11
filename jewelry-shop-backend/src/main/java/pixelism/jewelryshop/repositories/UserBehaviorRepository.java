@@ -2,9 +2,10 @@ package pixelism.jewelryshop.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import pixelism.jewelryshop.entities.Product;
-import pixelism.jewelryshop.entities.User;
-import pixelism.jewelryshop.entities.UserBehavior;
+import pixelism.jewelryshop.Product;
+import pixelism.jewelryshop.User;
+import pixelism.jewelryshop.UserBehavior;
+
 import java.util.List;
 
 public interface UserBehaviorRepository extends JpaRepository<UserBehavior, Long> {
