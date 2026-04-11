@@ -21,6 +21,7 @@ export default function ChatBox() {
     // Load lịch sử chat khi mở
     useEffect(() => {
         if (!open || !user) return
+        console.log('user object:', user)  // xem field thực tế
         fetch(`/api/chat/history?userId=${user.userId}`)
             .then(r => r.json())
             .then(setMessages)
