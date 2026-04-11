@@ -21,7 +21,7 @@ export default function ChatBox() {
     // Load lịch sử chat khi mở
     useEffect(() => {
         if (!open || !user) return
-        fetch(`/api/chat/history?userId=${user.id}`)
+        fetch(`/api/chat/history?userId=${user.userId}`)
             .then(r => r.json())
             .then(setMessages)
             .catch(() => {})
@@ -50,7 +50,7 @@ export default function ChatBox() {
             const res = await fetch('/api/chat/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: String(user.id), content: userMsg.content })
+                body: JSON.stringify({ userId: String(user.userId), content: userMsg.content })
             })
 
             if (!res.ok) {

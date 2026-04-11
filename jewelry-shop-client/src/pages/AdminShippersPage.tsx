@@ -22,7 +22,7 @@ export default function AdminShippersPage() {
   const toggleStatus = async (id: number, current: 'ACTIVE' | 'INACTIVE', data: { fullName: string; phone: string; email: string }) => {
     const newStatus = current === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
     try {
-      await shipperApi.update(id, { ...data, status: newStatus })
+      await shipperApi.update(id, { ...data, shipperStatus: newStatus })
       refresh()
     } catch (e: any) {
       setError(e.message)
@@ -43,7 +43,6 @@ export default function AdminShippersPage() {
         <div style={{ width: '40px', height: '1px', background: 'var(--gold)', margin: '20px auto 0' }} />
       </div>
 
-      {/* Form thêm mới */}
       <div style={{ border: '1px solid var(--border)', padding: '28px', marginBottom: '32px', background: 'white' }}>
         <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '20px' }}>Thêm shipper mới</p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
@@ -58,24 +57,23 @@ export default function AdminShippersPage() {
         </button>
       </div>
 
-      {/* Danh sách */}
       {loading ? (
         <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.8rem' }}>Đang tải...</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {shippers.map(s => (
-            <div key={s.id} style={{ border: '1px solid var(--border)', padding: '20px 24px', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div key={s.shipperId} style={{ border: '1px solid var(--border)', padding: '20px 24px', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem', marginBottom: '4px' }}>{s.fullName}</p>
                 <p style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{s.phone} — {s.email}</p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span style={{ fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: s.status === 'ACTIVE' ? '#5AB87A' : '#B85A5A', background: s.status === 'ACTIVE' ? '#5AB87A15' : '#B85A5A15', padding: '4px 10px', border: `1px solid ${s.status === 'ACTIVE' ? '#5AB87A30' : '#B85A5A30'}` }}>
-                  {s.status === 'ACTIVE' ? 'Hoạt động' : 'Ngừng'}
+                <span style={{ fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: s.shipperStatus === 'ACTIVE' ? '#5AB87A' : '#B85A5A', background: s.shipperStatus === 'ACTIVE' ? '#5AB87A15' : '#B85A5A15', padding: '4px 10px', border: `1px solid ${s.shipperStatus === 'ACTIVE' ? '#5AB87A30' : '#B85A5A30'}` }}>
+                  {s.shipperStatus === 'ACTIVE' ? 'Hoạt động' : 'Ngừng'}
                 </span>
-                <button onClick={() => toggleStatus(s.id, s.status, { fullName: s.fullName, phone: s.phone, email: s.email })}
+                <button onClick={() => toggleStatus(s.shipperId, s.shipperStatus, { fullName: s.fullName, phone: s.phone, email: s.email })}
                   style={{ fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '6px 14px', background: 'none', border: '1px solid var(--border)', cursor: 'pointer', color: 'var(--muted)' }}>
-                  {s.status === 'ACTIVE' ? 'Vô hiệu hóa' : 'Kích hoạt'}
+                  {s.shipperStatus === 'ACTIVE' ? 'Vô hiệu hóa' : 'Kích hoạt'}
                 </button>
               </div>
             </div>

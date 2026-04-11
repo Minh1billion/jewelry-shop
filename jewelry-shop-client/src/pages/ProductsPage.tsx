@@ -14,7 +14,7 @@ export default function ProductsPage() {
   const { data: categories } = useCategories()
   const [params, setParams] = useState({ page: 0, size: 12 } as any)
   const { data, loading } = useProducts(params)
-  const { add } = useCart(user?.id ?? null)
+  const { add } = useCart(user?.userId ?? null)
 
   const handleAdd = async (e: React.MouseEvent, productId: number) => {
     e.stopPropagation()
@@ -61,7 +61,7 @@ export default function ProductsPage() {
             style={{ background: 'transparent', border: 'none', borderBottom: '1px solid var(--border)', padding: '10px 0', fontFamily: 'Jost, sans-serif', fontSize: '0.78rem', letterSpacing: '0.1em', outline: 'none', color: 'var(--charcoal)', cursor: 'pointer', textTransform: 'uppercase' }}
             onChange={e => setParams({ ...params, categoryId: e.target.value || undefined, page: 0 })}>
             <option value="">Tất cả danh mục</option>
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {categories.map(c => <option key={c.categoryId} value={c.categoryId}>{c.name}</option>)}
           </select>
         </div>
 
@@ -72,7 +72,7 @@ export default function ProductsPage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
             {data?.content.map(p => (
-              <div key={p.id} className="product-card" onClick={() => navigate(`/products/${p.id}`)}>
+              <div key={p.productId} className="product-card" onClick={() => navigate(`/products/${p.productId}`)}>
                 <div style={{ height: '280px', background: 'var(--cream)', overflow: 'hidden' }}>
                   {p.imageUrl ? (
                     <img src={p.imageUrl} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -91,7 +91,7 @@ export default function ProductsPage() {
                     {p.price.toLocaleString('vi-VN')}₫
                   </p>
                   <button className="btn-ghost" style={{ width: '100%', padding: '10px' }}
-                    onClick={e => handleAdd(e, p.id)}>
+                    onClick={e => handleAdd(e, p.productId)}>
                     Thêm vào giỏ
                   </button>
                 </div>

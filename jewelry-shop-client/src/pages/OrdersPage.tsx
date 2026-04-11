@@ -15,7 +15,7 @@ const STATUS_COLOR: Record<string, string> = {
 export default function OrdersPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { orders, loading } = useOrders(user?.id ?? null)
+  const { orders, loading } = useOrders(user?.userId ?? null)
 
   if (!user) { navigate('/login'); return null }
 

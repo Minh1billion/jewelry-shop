@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 export default function CartPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { items, loading, update, remove } = useCart(user?.id ?? null)
+  const { items, loading, update, remove } = useCart(user?.userId ?? null)
   const [selectedIds, setSelectedIds] = useState<number[]>([])
 
   if (!user) { navigate('/login'); return null }
@@ -15,10 +15,10 @@ export default function CartPage() {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id])
 
   const toggleAll = () =>
-    setSelectedIds(selectedIds.length === items.length ? [] : items.map(i => i.id))
+    setSelectedIds(selectedIds.length === items.length ? [] : items.map(i => i.cartItemId))
 
   const total = items
-    .filter(i => selectedIds.includes(i.id))
+    .filter(i => selectedIds.includes(i.cartItemId))
     .reduce((s, i) => s + i.unitPrice * i.quantity, 0)
 
   return (
@@ -48,8 +48,8 @@ export default function CartPage() {
             </div>
 
             {items.map(item => (
-              <div key={item.id} style={{ display: 'flex', gap: '20px', alignItems: 'center', padding: '20px 0', borderBottom: '1px solid var(--border)' }}>
-                <input type="checkbox" checked={selectedIds.includes(item.id)} onChange={() => toggle(item.id)}
+              <div key={item.cartItemId} style={{ display: 'flex', gap: '20px', alignItems: 'center', padding: '20px 0', borderBottom: '1px solid var(--border)' }}>
+                <input type="checkbox" checked={selectedIds.includes(item.cartItemId)} onChange={() => toggle(item.cartItemId)}
                   style={{ accentColor: 'var(--gold)', width: '16px', height: '16px', flexShrink: 0 }} />
                 <div style={{ width: '80px', height: '80px', background: 'var(--cream)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <span style={{ opacity: 0.2 }}>◇</span>
@@ -59,13 +59,13 @@ export default function CartPage() {
                   <p style={{ fontSize: '0.85rem', color: 'var(--gold-dark)' }}>{item.unitPrice.toLocaleString('vi-VN')}₫</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <button onClick={() => update(item.id, Math.max(1, item.quantity - 1))}
+                  <button onClick={() => update(item.cartItemId, Math.max(1, item.quantity - 1))}
                     style={{ width: '28px', height: '28px', border: '1px solid var(--border)', background: 'transparent', cursor: 'pointer', fontSize: '1rem', color: 'var(--charcoal)' }}>−</button>
                   <span style={{ fontSize: '0.9rem', minWidth: '20px', textAlign: 'center' }}>{item.quantity}</span>
-                  <button onClick={() => update(item.id, item.quantity + 1)}
+                  <button onClick={() => update(item.cartItemId, item.quantity + 1)}
                     style={{ width: '28px', height: '28px', border: '1px solid var(--border)', background: 'transparent', cursor: 'pointer', fontSize: '1rem', color: 'var(--charcoal)' }}>+</button>
                 </div>
-                <button onClick={() => remove(item.id)}
+                <button onClick={() => remove(item.cartItemId)}
                   style={{ fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
                   Xóa
                 </button>
@@ -73,7 +73,6 @@ export default function CartPage() {
             ))}
           </div>
 
-          {/* Summary */}
           <div style={{ background: 'var(--cream)', border: '1px solid var(--border)', padding: '32px', position: 'sticky', top: '100px' }}>
             <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.4rem', fontWeight: 400, marginBottom: '24px' }}>Tóm tắt đơn hàng</h2>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '0.85rem', color: 'var(--muted)' }}>

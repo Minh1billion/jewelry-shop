@@ -1,29 +1,24 @@
-// ReportPage.tsx
-import React, { useState } from 'react';
-import { useGenerateReport, useExportReport } from '../hooks/useReport';
-import { ReportType } from '../types';
-import { useAuth } from '../hooks/useAuth'; // import hook auth
+import React, { useState } from 'react'
+import { useGenerateReport, useExportReport } from '../hooks/useReport'
+import { ReportType } from '../types'
+import { useAuth } from '../hooks/useAuth'
 
 const ReportPage: React.FC = () => {
-  const { user, loading: authLoading } = useAuth();
-  const adminId = user?.id ?? null;
+  const { user, loading: authLoading } = useAuth()
+  const adminId = user?.userId ?? null
 
-  // State cho form tạo báo cáo
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [reportType, setReportType] = useState<ReportType>('DAILY');
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
+  const [reportType, setReportType] = useState<ReportType>('DAILY')
 
-  // State cho xuất file
-  const [filename, setFilename] = useState('doanh_thu');
-  const [exportFormat, setExportFormat] = useState<'pdf' | 'csv' | 'excel'>('pdf');
+  const [filename, setFilename] = useState('doanh_thu')
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'csv' | 'excel'>('pdf')
 
-  // Custom hooks (không tanstack)
-  const { data: currentReport, isPending: isGenerating, error: generateError, mutateAsync: generateReport } = useGenerateReport();
-  const { isPending: isExporting, error: exportError, mutateAsync: exportReport } = useExportReport();
+  const { data: currentReport, isPending: isGenerating, error: generateError, mutateAsync: generateReport } = useGenerateReport()
+  const { isPending: isExporting, error: exportError, mutateAsync: exportReport } = useExportReport()
 
-  const currentReportId = currentReport?.id ?? null;
+  const currentReportId = currentReport?.reportId ?? null
 
-  // Kiểm tra đăng nhập
   if (!authLoading && !adminId) {
     return (
       <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center px-6">
@@ -38,58 +33,57 @@ const ReportPage: React.FC = () => {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!adminId) {
-      alert('Bạn cần đăng nhập để tạo báo cáo');
-      return;
+      alert('Bạn cần đăng nhập để tạo báo cáo')
+      return
     }
     if (!fromDate || !toDate) {
-      alert('Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc');
-      return;
+      alert('Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc')
+      return
     }
     if (new Date(fromDate) > new Date(toDate)) {
-      alert('Mốc thời gian không hợp lệ, vui lòng nhập lại');
-      return;
+      alert('Mốc thời gian không hợp lệ, vui lòng nhập lại')
+      return
     }
 
     try {
-      await generateReport({ fromDate, toDate, reportType, adminId });
+      await generateReport({ fromDate, toDate, reportType, adminId })
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message)
     }
-  };
+  }
 
   const handleExport = async () => {
     if (!currentReportId) {
-      alert('Chưa có báo cáo nào được tạo. Hãy tạo báo cáo trước.');
-      return;
+      alert('Chưa có báo cáo nào được tạo. Hãy tạo báo cáo trước.')
+      return
     }
     if (!filename.trim()) {
-      alert('Tên file không hợp lệ, vui lòng nhập lại');
-      return;
+      alert('Tên file không hợp lệ, vui lòng nhập lại')
+      return
     }
-    const nameRegex = /^[\w\-. ]+$/;
+    const nameRegex = /^[\w\-. ]+$/
     if (!nameRegex.test(filename)) {
-      alert('Tên file không hợp lệ, vui lòng nhập lại');
-      return;
+      alert('Tên file không hợp lệ, vui lòng nhập lại')
+      return
     }
 
     try {
-      await exportReport({ reportId: currentReportId, format: exportFormat, filename });
+      await exportReport({ reportId: currentReportId, format: exportFormat, filename })
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] py-12 px-6">
       <div className="max-w-3xl mx-auto page-enter">
-        {/* Tiêu đề */}
         <div className="text-center mb-12">
           <span className="tag inline-block mb-3">Jewelry Analytics</span>
           <h1 className="serif text-4xl md:text-5xl font-light tracking-wide text-[#2C2C2C]">
@@ -98,7 +92,6 @@ const ReportPage: React.FC = () => {
           <div className="w-16 h-px bg-[#B8975A] mx-auto mt-4"></div>
         </div>
 
-        {/* Form tạo báo cáo */}
         <form onSubmit={handleGenerate} className="bg-white border border-[#E2D9CC] p-8 mb-10 shadow-sm">
           <h2 className="serif text-2xl font-medium text-[#2C2C2C] mb-6">Tạo báo cáo</h2>
 
@@ -158,7 +151,6 @@ const ReportPage: React.FC = () => {
           )}
         </form>
 
-        {/* Hiển thị báo cáo */}
         {currentReport && (
           <div className="bg-white border border-[#E2D9CC] p-8 mb-10 shadow-sm">
             <h2 className="serif text-2xl font-medium text-[#2C2C2C] mb-6">Báo cáo chi tiết</h2>
@@ -183,13 +175,12 @@ const ReportPage: React.FC = () => {
               </div>
               <div className="flex justify-between pt-2">
                 <span className="text-[0.75rem] uppercase tracking-wide text-[#8A8480]">Người tạo</span>
-                <span className="text-sm">{currentReport.createdBy?.username || `ID ${currentReport.createdBy?.id}`}</span>
+                <span className="text-sm">{currentReport.createdBy?.username || `ID ${currentReport.createdBy?.userId}`}</span>
               </div>
             </div>
           </div>
         )}
 
-        {/* Khu vực xuất file */}
         {currentReportId && (
           <div className="bg-white border border-[#E2D9CC] p-8 shadow-sm">
             <h2 className="serif text-2xl font-medium text-[#2C2C2C] mb-6">Xuất báo cáo</h2>
@@ -241,7 +232,7 @@ const ReportPage: React.FC = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ReportPage;
+export default ReportPage

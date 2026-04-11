@@ -1,8 +1,11 @@
-package pixelism.jewelryshop.features;
+package pixelism.jewelryshop.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pixelism.jewelryshop.features.ChatMessage;
+import pixelism.jewelryshop.features.ChatService;
+import pixelism.jewelryshop.features.User;
 import pixelism.jewelryshop.repositories.ChatMessageRepository;
 import pixelism.jewelryshop.repositories.ChatSessionRepository;
 import pixelism.jewelryshop.repositories.UserRepository;

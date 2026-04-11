@@ -1,52 +1,52 @@
-import { useState } from 'react';
-import { generateReport, exportReport, GenerateReportRequest } from '../api/report';
-import { RevenueReport } from '../types';
+import { useState } from 'react'
+import { reportApi, GenerateReportRequest } from '../api/report'
+import type { RevenueReport } from '../types'
 
 export function useGenerateReport() {
-  const [data, setData] = useState<RevenueReport | null>(null);
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [data, setData] = useState<RevenueReport | null>(null)
+  const [isPending, setIsPending] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
 
   const mutateAsync = async (params: GenerateReportRequest) => {
-    setIsPending(true);
-    setError(null);
+    setIsPending(true)
+    setError(null)
     try {
-      const result = await generateReport(params);
-      setData(result);
-      return result;
+      const result = await reportApi.generate(params)
+      setData(result)
+      return result
     } catch (err) {
-      const errorObj = err instanceof Error ? err : new Error(String(err));
-      setError(errorObj);
-      throw errorObj;
+      const errorObj = err instanceof Error ? err : new Error(String(err))
+      setError(errorObj)
+      throw errorObj
     } finally {
-      setIsPending(false);
+      setIsPending(false)
     }
-  };
+  }
 
-  return { data, isPending, error, mutateAsync };
+  return { data, isPending, error, mutateAsync }
 }
 
 export function useExportReport() {
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [isPending, setIsPending] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
 
   const mutateAsync = async (params: {
-    reportId: number;
-    format: 'pdf' | 'csv' | 'excel';
-    filename: string;
+    reportId: number
+    format: 'pdf' | 'csv' | 'excel'
+    filename: string
   }) => {
-    setIsPending(true);
-    setError(null);
+    setIsPending(true)
+    setError(null)
     try {
-      await exportReport(params.reportId, params.format, params.filename);
+      await reportApi.export(params.reportId, params.format, params.filename)
     } catch (err) {
-      const errorObj = err instanceof Error ? err : new Error(String(err));
-      setError(errorObj);
-      throw errorObj;
+      const errorObj = err instanceof Error ? err : new Error(String(err))
+      setError(errorObj)
+      throw errorObj
     } finally {
-      setIsPending(false);
+      setIsPending(false)
     }
-  };
+  }
 
-  return { isPending, error, mutateAsync };
+  return { isPending, error, mutateAsync }
 }

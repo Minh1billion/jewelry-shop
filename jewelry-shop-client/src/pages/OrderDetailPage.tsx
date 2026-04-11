@@ -22,7 +22,7 @@ export default function OrderDetailPage() {
       </div>
       <div className="space-y-2">
         {order.items?.map(item => (
-          <div key={item.id} className="flex justify-between border-b pb-2 text-sm">
+          <div key={item.orderItemId} className="flex justify-between border-b pb-2 text-sm">
             <span>{item.product.name} x{item.quantity}</span>
             <span>{(item.unitPrice * item.quantity).toLocaleString()}đ</span>
           </div>

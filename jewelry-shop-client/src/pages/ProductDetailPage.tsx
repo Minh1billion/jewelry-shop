@@ -8,7 +8,7 @@ export default function ProductDetailPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { data: product, loading } = useProduct(Number(id))
-  const { add } = useCart(user?.id ?? null)
+  const { add } = useCart(user?.userId ?? null)
 
   if (loading) return (
     <div style={{ textAlign: 'center', padding: '120px 0', color: 'var(--muted)', letterSpacing: '0.15em', fontSize: '0.8rem', textTransform: 'uppercase' }}>
@@ -21,7 +21,7 @@ export default function ProductDetailPage() {
 
   const handleAdd = async () => {
     if (!user) return navigate('/login')
-    await add(product.id, 1)
+    await add(product.productId, 1)
     navigate('/cart')
   }
 
@@ -33,7 +33,6 @@ export default function ProductDetailPage() {
       </button>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
-        {/* Image */}
         <div style={{ height: '280px', background: 'var(--cream)', overflow: 'hidden' }}>
           {product.imageUrl ? (
             <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -44,7 +43,6 @@ export default function ProductDetailPage() {
           )}
         </div>
 
-        {/* Info */}
         <div>
           {product.category && (
             <span className="tag" style={{ marginBottom: '20px', display: 'inline-block' }}>{product.category.name}</span>

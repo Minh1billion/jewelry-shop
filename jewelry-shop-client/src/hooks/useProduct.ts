@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { productApi } from '../api/product'
-import type { Product, Page } from '../types'
+import type { Page } from '../api/product'
+import type { Product } from '../types'
 
 export function useProducts(params: Parameters<typeof productApi.getAll>[0]) {
   const [data, setData] = useState<Page<Product> | null>(null)
@@ -20,11 +21,8 @@ export function useProduct(id: number | null) {
 
   useEffect(() => {
     if (id === null || isNaN(id)) return
-
     setLoading(true)
-    productApi.getById(id)
-      .then(setData)
-      .finally(() => setLoading(false))
+    productApi.getById(id).then(setData).finally(() => setLoading(false))
   }, [id])
 
   return { data, loading }

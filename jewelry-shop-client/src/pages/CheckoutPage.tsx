@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { orderApi } from '../api/order'
+import { cartApi } from '../api/cart'
 
 export default function CheckoutPage() {
   const { user } = useAuth()
@@ -35,8 +35,8 @@ export default function CheckoutPage() {
     setError(null)
 
     try {
-      const order = await orderApi.checkout({
-        userId: user.id,
+      const order = await cartApi.checkout({
+        userId: user.userId,
         selectedItemIds: selectedIds,
         ...form
       })

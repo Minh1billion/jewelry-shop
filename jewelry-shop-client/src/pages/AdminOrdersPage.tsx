@@ -3,7 +3,6 @@ import { useAllOrders } from '../hooks/useOrder'
 import { useActiveShippers } from '../hooks/useShipper'
 import { orderApi } from '../api/order'
 import { shipperApi } from '../api/shipper'
-import type { Order } from '../types'
 
 const STATUS_LABEL: Record<string, string> = {
   PENDING: 'Chờ xử lý', CONFIRMED: 'Đã xác nhận',
@@ -100,7 +99,7 @@ export default function AdminOrdersPage() {
                       style={{ fontSize: '0.75rem', padding: '8px 12px', border: '1px solid var(--border)', background: 'white' }}>
                       <option value=''>Chọn shipper</option>
                       {shippers.map(s => (
-                        <option key={s.id} value={s.id}>{s.fullName} — {s.phone}</option>
+                        <option key={s.shipperId} value={s.shipperId}>{s.fullName} — {s.phone}</option>
                       ))}
                     </select>
                     <button onClick={() => assign(o.orderCode)}
