@@ -6,29 +6,29 @@ export function useCart(userId: number | null) {
   const [items, setItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
 
-  const fetch = () => {
+  const loadCart = () => {
     if (!userId) return
     setLoading(true)
     cartApi.getCart(userId).then(setItems).finally(() => setLoading(false))
   }
 
-  useEffect(() => { fetch() }, [userId])
+  useEffect(() => { loadCart() }, [userId])
 
   const add = async (productId: number, quantity: number) => {
     if (!userId) return
     await cartApi.addToCart(userId, productId, quantity)
-    fetch()
+    loadCart()
   }
 
   const update = async (cartItemId: number, quantity: number) => {
     await cartApi.updateQuantity(cartItemId, quantity)
-    fetch()
+    loadCart()
   }
 
   const remove = async (cartItemId: number) => {
     await cartApi.removeItem(cartItemId)
-    fetch()
+    loadCart()
   }
 
-  return { items, loading, add, update, remove, refetch: fetch }
+  return { items, loading, add, update, remove, refetch: loadCart }
 }

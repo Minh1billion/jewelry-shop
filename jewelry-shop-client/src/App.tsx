@@ -46,7 +46,7 @@ function Navbar() {
             </>
           )}
 
-          {user?.role === 'CUSTOMER' && (
+          {user?.role === 'USER' && (
             <>
               <NavLink to="/cart" style={navLinkStyle}>Giỏ hàng</NavLink>
               <NavLink to="/orders" style={navLinkStyle}>Đơn hàng</NavLink>
@@ -59,10 +59,6 @@ function Navbar() {
               <NavLink to="/admin/shippers" style={navLinkStyle}>Shipper</NavLink>
               <NavLink to="/report" style={navLinkStyle}>Báo cáo</NavLink>
             </>
-          )}
-
-          {user?.role === 'SHIPPER' && (
-            <NavLink to="/shipper/orders" style={navLinkStyle}>Đơn của tôi</NavLink>
           )}
 
           {user && (

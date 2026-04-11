@@ -20,6 +20,7 @@ export default function AdminOrdersPage() {
   const [error, setError] = useState('')
 
   const confirm = async (orderCode: string) => {
+    setError('')
     try {
       await orderApi.confirm(orderCode)
       refresh()
@@ -31,8 +32,19 @@ export default function AdminOrdersPage() {
   const assign = async (orderCode: string) => {
     const shipperId = selectedShipper[orderCode]
     if (!shipperId) return setError('Vui lòng chọn shipper')
+    setError('')
     try {
       await shipperApi.assignToOrder(orderCode, shipperId)
+      refresh()
+    } catch (e: any) {
+      setError(e.message)
+    }
+  }
+
+  const updateDelivery = async (orderCode: string, shipperId: number, status: 'DELIVERED' | 'CANCELLED') => {
+    setError('')
+    try {
+      await shipperApi.updateDeliveryStatus(orderCode, shipperId, status)
       refresh()
     } catch (e: any) {
       setError(e.message)
@@ -105,6 +117,19 @@ export default function AdminOrdersPage() {
                     <button onClick={() => assign(o.orderCode)}
                       style={{ fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '8px 20px', background: 'var(--gold)', color: 'white', border: 'none', cursor: 'pointer' }}>
                       Gán shipper
+                    </button>
+                  </div>
+                )}
+
+                {o.status === 'SHIPPING' && o.shipper && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => updateDelivery(o.orderCode, o.shipper!.shipperId, 'DELIVERED')}
+                      style={{ fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '8px 20px', background: 'var(--charcoal)', color: 'white', border: 'none', cursor: 'pointer' }}>
+                      Đã giao hàng
+                    </button>
+                    <button onClick={() => updateDelivery(o.orderCode, o.shipper!.shipperId, 'CANCELLED')}
+                      style={{ fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '8px 20px', background: 'none', color: '#B85A5A', border: '1px solid #B85A5A', cursor: 'pointer' }}>
+                      Không giao được
                     </button>
                   </div>
                 )}

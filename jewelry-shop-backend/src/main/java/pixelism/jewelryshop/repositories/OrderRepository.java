@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pixelism.jewelryshop.features.Order;
+import pixelism.jewelryshop.features.Shipper;
 import pixelism.jewelryshop.features.User;
 
 import java.time.LocalDate;
@@ -18,4 +19,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "AND CAST(o.createdAt AS date) BETWEEN :from AND :to")
     List<Order> findPaidOrdersBetween(@Param("from") LocalDate from,
                                       @Param("to") LocalDate to);
+
+    Optional<Shipper> findByShipper_ShipperId(Long shipperShipperId);
 }

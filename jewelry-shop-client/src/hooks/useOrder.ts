@@ -6,13 +6,15 @@ export function useOrders(userId: number | null) {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
+  const loadOrders = () => {
     if (!userId) return
     setLoading(true)
     orderApi.getMyOrders(userId).then(setOrders).finally(() => setLoading(false))
-  }, [userId])
+  }
 
-  return { orders, loading }
+  useEffect(() => { loadOrders() }, [userId])
+
+  return { orders, loading, refresh: loadOrders }
 }
 
 export function useOrderDetail(orderCode: string) {
@@ -31,12 +33,12 @@ export function useAllOrders() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(false)
 
-  const fetch = () => {
+  const loadOrders = () => {
     setLoading(true)
     orderApi.getAll().then(setOrders).finally(() => setLoading(false))
   }
 
-  useEffect(() => { fetch() }, [])
+  useEffect(() => { loadOrders() }, [])
 
-  return { orders, loading, refresh: fetch }
+  return { orders, loading, refresh: loadOrders }
 }

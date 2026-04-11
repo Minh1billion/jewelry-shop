@@ -28,12 +28,22 @@ public class AuthController {
                 body.get("phone"),
                 userRepository, cartRepository
         );
-        return ResponseEntity.ok(Map.of("id", registered.getUserId(), "username", registered.getUsername()));
+        return ResponseEntity.ok(Map.of(
+                "userId", registered.getUserId(),
+                "username", registered.getUsername()
+        ));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         User logged = user.login(body.get("username"), body.get("password"), userRepository);
-        return ResponseEntity.ok(Map.of("id", logged.getUserId(), "username", logged.getUsername(), "role", logged.getRole()));
+        return ResponseEntity.ok(Map.of(
+                "userId", logged.getUserId(),
+                "username", logged.getUsername(),
+                "role", logged.getRole(),
+                "fullName", logged.getFullName() != null ? logged.getFullName() : "",
+                "email", logged.getEmail() != null ? logged.getEmail() : "",
+                "phone", logged.getPhone() != null ? logged.getPhone() : ""
+        ));
     }
 }

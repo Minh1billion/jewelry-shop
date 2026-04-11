@@ -15,13 +15,13 @@ const STATUS_COLOR: Record<string, string> = {
 export default function OrdersPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { orders, loading } = useOrders(user?.userId ?? null)
+  const { orders, loading, refresh } = useOrders(user?.userId ?? null)
 
   if (!user) { navigate('/login'); return null }
 
   const cancel = async (orderCode: string) => {
     await orderApi.cancel(orderCode)
-    window.location.reload()
+    refresh()
   }
 
   return (
