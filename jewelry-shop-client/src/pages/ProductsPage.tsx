@@ -5,6 +5,7 @@ import { useCart } from '../hooks/useCart'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import ChatBox from '../pages/ChatBox'
+import RecommendationSection from '../pages/RecommendationSection'
 
 const HERO_IMG = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1600&q=85'
 
@@ -119,6 +120,7 @@ export default function ProductsPage() {
           </div>
         )}
       </div>
+        <RecommendationSection />
         <ChatBox />
     </div>
   )
