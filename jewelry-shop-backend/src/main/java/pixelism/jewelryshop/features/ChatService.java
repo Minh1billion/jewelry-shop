@@ -18,7 +18,7 @@ public class ChatService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${claude.api.key:YOUR_API_KEY_HERE}")
+    @Value("${claude.api.key}")
     private String apiKey;
 
     @Value("${claude.api.timeout-seconds:10}")
