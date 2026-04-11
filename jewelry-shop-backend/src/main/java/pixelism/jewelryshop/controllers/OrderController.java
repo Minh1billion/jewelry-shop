@@ -7,7 +7,7 @@ import pixelism.jewelryshop.features.Order;
 import pixelism.jewelryshop.features.User;
 import pixelism.jewelryshop.repositories.OrderRepository;
 import pixelism.jewelryshop.repositories.UserRepository;
-
+import pixelism.jewelryshop.services.OrderService;
 import java.util.List;
 import java.util.Map;
 
@@ -16,34 +16,36 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
     private final UserRepository userRepository;
     private final Order order = new Order();
+    private final OrderRepository orderRepository;
 
     @GetMapping("/all")
     public ResponseEntity<List<Order>> getAll() {
-        return ResponseEntity.ok(orderRepository.findAll());
+        return ResponseEntity.ok(orderService.getAll());
     }
 
     @GetMapping
     public ResponseEntity<List<Order>> getMyOrders(@RequestParam Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return ResponseEntity.ok(order.getOrdersByUser(user, orderRepository));
+        return ResponseEntity.ok(orderService.getOrdersByUser(user));
     }
 
     @GetMapping("/{orderCode}")
-    public ResponseEntity<Order> getDetail(@PathVariable String orderCode) {
-        return ResponseEntity.ok(order.getOrderDetail(orderCode, orderRepository));
+    public ResponseEntity<Order> getOrderDetail(@PathVariable String orderCode) {
+        return ResponseEntity.ok(orderService.getOrderDetail(orderCode));
     }
 
     @PutMapping("/{orderCode}/cancel")
     public ResponseEntity<?> cancel(@PathVariable String orderCode) {
-        Order o = order.getOrderDetail(orderCode, orderRepository);
-        if (o.getStatus() != Order.OrderStatus.PENDING)
+        Order order = orderService.getOrderDetail(orderCode);
+        if (order.getStatus() != Order.OrderStatus.PENDING) {
             return ResponseEntity.badRequest().body(Map.of("message", "Chỉ hủy được đơn đang chờ xử lý"));
-        o.setStatus(Order.OrderStatus.CANCELLED);
-        orderRepository.save(o);
+        }
+        order.setStatus(Order.OrderStatus.CANCELLED);
+        orderService.save(order);
         return ResponseEntity.ok(Map.of("message", "Đã hủy đơn"));
     }
 
@@ -52,8 +54,8 @@ public class OrderController {
         Order o = order.confirmOrder(orderCode, orderRepository);
         return ResponseEntity.ok(Map.of(
                 "message", "Đã xác nhận đơn hàng",
-                "orderCode", o.getOrderCode(),
-                "status", o.getStatus()
+                "orderCode", order.getOrderCode(),
+                "status", order.getStatus()
         ));
     }
 }

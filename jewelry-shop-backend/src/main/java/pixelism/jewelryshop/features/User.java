@@ -1,6 +1,7 @@
 package pixelism.jewelryshop.features;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import pixelism.jewelryshop.repositories.CartRepository;
@@ -19,6 +20,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("userId")
     private Long userId;
 
     @Column(nullable = false, unique = true)

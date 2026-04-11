@@ -7,57 +7,46 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pixelism.jewelryshop.features.Product;
 import pixelism.jewelryshop.features.User;
-import pixelism.jewelryshop.repositories.ProductRepository;
-import pixelism.jewelryshop.repositories.UserBehaviorRepository;
-import pixelism.jewelryshop.repositories.UserRepository;
+import pixelism.jewelryshop.services.ProductService;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductRepository productRepository;
-    private final UserBehaviorRepository userBehaviorRepository;
-    private final UserRepository userRepository;
-    private final Product product = new Product();
+    private final ProductService productService;
 
     @GetMapping
-    public Page<Product> getProducts(
+    public Page<Product> getAll(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
-            Pageable pageable) {
-        return product.getProducts(keyword, categoryId, minPrice, maxPrice, pageable, productRepository);
+            Pageable pageable
+    ) {
+        return productService.getAll(keyword, categoryId, minPrice, maxPrice, pageable);
     }
 
     @GetMapping("/{id}")
-    public Product getById(@PathVariable Long id) {
-        return product.findProduct(id, productRepository);
+    public Product getById(@PathVariable Long id, User user) {
+        return productService.getById(id, user);
     }
 
     @PostMapping
-    public Product create(@RequestBody Product p) {
-        return product.create(p, productRepository);
+    public Product create(@RequestBody Product product) {
+        return productService.create(product);
     }
 
     @PutMapping("/{id}")
-    public Product update(@PathVariable Long id, @RequestBody Product p) {
-        return product.update(id, p, productRepository);
+    public Product update(@PathVariable Long id, @RequestBody Product product,  User user) {
+        return productService.update(id, product, user);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        product.delete(id, productRepository);
+        productService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/recommendations")
-    public ResponseEntity<List<Product>> recommendations(@RequestParam(required = false) Long userId) {
-        User user = userId != null ? userRepository.findById(userId).orElse(null) : null;
-        return ResponseEntity.ok(product.getRecommendations(user, productRepository, userBehaviorRepository));
     }
 }

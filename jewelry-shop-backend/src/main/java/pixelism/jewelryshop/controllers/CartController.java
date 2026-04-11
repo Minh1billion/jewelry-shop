@@ -3,11 +3,9 @@ package pixelism.jewelryshop.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pixelism.jewelryshop.features.Cart;
-import pixelism.jewelryshop.features.CartItem;
-import pixelism.jewelryshop.features.Order;
-import pixelism.jewelryshop.features.User;
+import pixelism.jewelryshop.features.*;
 import pixelism.jewelryshop.repositories.*;
+import pixelism.jewelryshop.services.UserBehaviorService;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +21,7 @@ public class CartController {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final Cart cart = new Cart();
+    private final UserBehaviorService userBehaviorService;
 
     @GetMapping
     public ResponseEntity<List<CartItem>> getCart(@RequestParam Long userId) {
@@ -39,6 +38,7 @@ public class CartController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         cart.addToCart(user, productId, quantity, cartRepository, cartItemRepository, productRepository);
+        userBehaviorService.track(user, productId, UserBehavior.BehaviorType.ADD_TO_CART);
         return ResponseEntity.ok(Map.of("message", "Đã thêm vào giỏ hàng"));
     }
 
