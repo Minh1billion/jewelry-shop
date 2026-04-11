@@ -1,8 +1,11 @@
-package pixelism.jewelryshop;
+package pixelism.jewelryshop.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import pixelism.jewelryshop.features.Order;
+import pixelism.jewelryshop.features.RevenueReport;
+import pixelism.jewelryshop.features.User;
 import pixelism.jewelryshop.repositories.*;
 
 import java.math.BigDecimal;

@@ -1,7 +1,7 @@
 package pixelism.jewelryshop.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pixelism.jewelryshop.Category;
+import pixelism.jewelryshop.features.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 }

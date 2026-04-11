@@ -1,9 +1,9 @@
 package pixelism.jewelryshop.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pixelism.jewelryshop.Cart;
-import pixelism.jewelryshop.CartItem;
-import pixelism.jewelryshop.Product;
+import pixelism.jewelryshop.features.Cart;
+import pixelism.jewelryshop.features.CartItem;
+import pixelism.jewelryshop.features.Product;
 
 import java.util.List;
 import java.util.Optional;

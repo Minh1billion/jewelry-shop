@@ -1,4 +1,4 @@
-package pixelism.jewelryshop;
+package pixelism.jewelryshop.features;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

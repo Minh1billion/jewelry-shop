@@ -1,8 +1,8 @@
 package pixelism.jewelryshop.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pixelism.jewelryshop.ChatSession;
-import pixelism.jewelryshop.User;
+import pixelism.jewelryshop.features.ChatSession;
+import pixelism.jewelryshop.features.User;
 
 import java.util.Optional;
 

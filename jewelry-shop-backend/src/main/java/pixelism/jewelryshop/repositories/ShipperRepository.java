@@ -1,7 +1,7 @@
 package pixelism.jewelryshop.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pixelism.jewelryshop.Shipper;
+import pixelism.jewelryshop.features.Shipper;
 
 import java.util.List;
 import java.util.Optional;

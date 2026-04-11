@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pixelism.jewelryshop.Category;
-import pixelism.jewelryshop.Product;
+import pixelism.jewelryshop.features.Category;
+import pixelism.jewelryshop.features.Product;
 
 import java.math.BigDecimal;
 import java.util.List;

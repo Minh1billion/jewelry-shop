@@ -1,4 +1,4 @@
-package pixelism.jewelryshop;
+package pixelism.jewelryshop.features;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

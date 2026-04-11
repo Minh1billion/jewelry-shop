@@ -1,10 +1,12 @@
-package pixelism.jewelryshop;
+package pixelism.jewelryshop.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pixelism.jewelryshop.features.Product;
+import pixelism.jewelryshop.features.User;
 import pixelism.jewelryshop.repositories.ProductRepository;
 import pixelism.jewelryshop.repositories.UserBehaviorRepository;
 import pixelism.jewelryshop.repositories.UserRepository;

@@ -1,4 +1,4 @@
-package pixelism.jewelryshop;
+package pixelism.jewelryshop.features;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;

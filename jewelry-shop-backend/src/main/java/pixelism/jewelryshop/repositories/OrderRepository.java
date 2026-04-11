@@ -3,8 +3,8 @@ package pixelism.jewelryshop.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pixelism.jewelryshop.Order;
-import pixelism.jewelryshop.User;
+import pixelism.jewelryshop.features.Order;
+import pixelism.jewelryshop.features.User;
 
 import java.time.LocalDate;
 import java.util.List;

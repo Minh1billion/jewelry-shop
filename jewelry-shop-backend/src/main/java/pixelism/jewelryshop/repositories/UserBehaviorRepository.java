@@ -2,9 +2,9 @@ package pixelism.jewelryshop.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import pixelism.jewelryshop.Product;
-import pixelism.jewelryshop.User;
-import pixelism.jewelryshop.UserBehavior;
+import pixelism.jewelryshop.features.Product;
+import pixelism.jewelryshop.features.User;
+import pixelism.jewelryshop.features.UserBehavior;
 
 import java.util.List;
 
