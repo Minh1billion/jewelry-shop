@@ -54,8 +54,8 @@ public class OrderController {
         Order o = order.confirmOrder(orderCode, orderRepository);
         return ResponseEntity.ok(Map.of(
                 "message", "Đã xác nhận đơn hàng",
-                "orderCode", order.getOrderCode(),
-                "status", order.getStatus()
+                "orderCode", o.getOrderCode(),
+                "status", o.getStatus()
         ));
     }
 }

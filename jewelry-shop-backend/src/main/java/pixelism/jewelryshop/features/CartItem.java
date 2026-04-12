@@ -3,6 +3,7 @@ package pixelism.jewelryshop.features;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import pixelism.jewelryshop.repositories.CartItemRepository;
 
 import java.math.BigDecimal;
 
@@ -36,5 +37,20 @@ public class CartItem {
     @Transient
     public BigDecimal getSubtotal() {
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
+
+    public void removeItem(Long cartItemId, CartItemRepository cartItemRepository) {
+        CartItem item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("Cart item không tồn tại"));
+        cartItemRepository.delete(item);
+    }
+
+    public CartItem updateQuantity(Long cartItemId, int quantity, CartItemRepository cartItemRepository) {
+        if (quantity <= 0)
+            throw new RuntimeException("Số lượng phải lớn hơn 0");
+        CartItem item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("Cart item không tồn tại"));
+        item.setQuantity(quantity);
+        return cartItemRepository.save(item);
     }
 }

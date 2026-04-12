@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pixelism.jewelryshop.features.Product;
 import pixelism.jewelryshop.features.User;
+import pixelism.jewelryshop.repositories.UserRepository;
 import pixelism.jewelryshop.services.ProductService;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 public class ProductController {
 
     private final ProductService productService;
+    private final UserRepository userRepository;
 
     @GetMapping
     public Page<Product> getAll(
@@ -30,7 +32,9 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Product getById(@PathVariable Long id, User user) {
+    public Product getById(@PathVariable Long id,
+                           @RequestParam(required = false) Long userId) {
+        User user = userId != null ? userRepository.findById(userId).orElse(null) : null;
         return productService.getById(id, user);
     }
 
@@ -40,7 +44,9 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product update(@PathVariable Long id, @RequestBody Product product,  User user) {
+    public Product update(@PathVariable Long id, @RequestBody Product product,
+                          @RequestParam(required = false) Long userId) {
+        User user = userId != null ? userRepository.findById(userId).orElse(null) : null;
         return productService.update(id, product, user);
     }
 

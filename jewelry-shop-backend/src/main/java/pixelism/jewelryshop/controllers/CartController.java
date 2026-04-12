@@ -21,6 +21,7 @@ public class CartController {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final Cart cart = new Cart();
+    private final CartItem cartItem = new CartItem();
     private final UserBehaviorService userBehaviorService;
 
     @GetMapping
@@ -46,16 +47,13 @@ public class CartController {
     public ResponseEntity<?> updateQuantity(@PathVariable Long cartItemId,
                                             @RequestBody Map<String, Object> body) {
         int quantity = Integer.parseInt(body.get("quantity").toString());
-        CartItem item = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
-        item.setQuantity(quantity);
-        cartItemRepository.save(item);
+        cartItem.updateQuantity(cartItemId, quantity, cartItemRepository);
         return ResponseEntity.ok(Map.of("message", "Đã cập nhật số lượng"));
     }
 
     @DeleteMapping("/{cartItemId}")
     public ResponseEntity<Void> removeItem(@PathVariable Long cartItemId) {
-        cartItemRepository.deleteById(cartItemId);
+        cartItem.removeItem(cartItemId, cartItemRepository);
         return ResponseEntity.noContent().build();
     }
 

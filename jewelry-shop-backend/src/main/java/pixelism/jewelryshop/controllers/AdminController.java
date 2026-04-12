@@ -43,7 +43,7 @@ public class AdminController {
 
         RevenueReport r = reportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Báo cáo không tồn tại"));
-        byte[] data = r.export(id, format, filename, reportRepository);
+        byte[] data = r.exportFile(id, format, filename, reportRepository);
 
         MediaType mediaType = switch (format.toLowerCase()) {
             case "pdf"   -> MediaType.APPLICATION_PDF;

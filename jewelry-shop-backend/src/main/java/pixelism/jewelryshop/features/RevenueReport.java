@@ -97,8 +97,8 @@ public class RevenueReport {
                 .build());
     }
 
-    public byte[] export(Long id, String format, String filename,
-                         RevenueReportRepository reportRepository) {
+    public byte[] exportFile(Long id, String format, String filename,
+                             RevenueReportRepository reportRepository) {
         RevenueReport r = reportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Báo cáo không tồn tại"));
 
