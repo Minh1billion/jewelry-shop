@@ -1,6 +1,6 @@
 package pixelism.jewelryshop.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import pixelism.jewelryshop.features.Order;
@@ -8,18 +8,18 @@ import pixelism.jewelryshop.features.RevenueReport;
 import pixelism.jewelryshop.features.User;
 import pixelism.jewelryshop.repositories.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
-    @Autowired private RevenueReportRepository reportRepository;
-    @Autowired private OrderRepository orderRepository;
-    @Autowired private UserRepository userRepository;
+    private final RevenueReportRepository reportRepository;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
     @PostMapping("/reports/generate")
     public ResponseEntity<RevenueReport> generateReport(@RequestBody Map<String, String> body) {
@@ -31,20 +31,7 @@ public class AdminController {
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
         RevenueReport delegate = new RevenueReport();
-        delegate.validateDateRange(from, to, type);
-
-        List<Order> orders = reportRepository.findPaidOrdersBetween(from, to);
-        if (orders.isEmpty())
-            throw new RuntimeException("Hiện chưa có dữ liệu, hãy quay lại sau");
-
-        BigDecimal total = orders.stream()
-                .map(Order::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return ResponseEntity.ok(reportRepository.save(RevenueReport.builder()
-                .fromDate(from).toDate(to).reportType(type)
-                .totalRevenue(total).totalOrders(orders.size())
-                .createdBy(admin).build()));
+        return ResponseEntity.ok(delegate.generateReport(from, to, type, admin, reportRepository));
     }
 
     @GetMapping("/reports/{id}/export")

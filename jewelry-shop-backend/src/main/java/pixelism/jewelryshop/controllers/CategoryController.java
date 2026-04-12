@@ -13,9 +13,10 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryRepository categoryRepository;
+    private final Category category = new Category();
 
     @GetMapping
     public List<Category> getAll() {
-        return categoryRepository.findAll();
+        return category.getAll(categoryRepository);
     }
 }
