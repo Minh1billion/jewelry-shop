@@ -84,6 +84,9 @@ public class CartController {
                 body.get("note") != null ? body.get("note").toString() : null,
                 orderRepository, cartItemRepository
         );
+        for (Long id : cartItemIds) {
+            userBehaviorService.track(user, id, UserBehavior.BehaviorType.PURCHASE);
+        }
         return ResponseEntity.ok(order);
     }
 }
